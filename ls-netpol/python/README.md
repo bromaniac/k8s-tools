@@ -1,1 +1,0 @@
-List network policies for namespaces matching some labels (in this code in zone dmz and not a part of Istio).
