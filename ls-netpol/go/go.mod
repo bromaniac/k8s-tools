@@ -1,4 +1,4 @@
-module github.com/bromaniac/netpol-checker/v2
+module github.com/bromaniac/k8s-misc/ls-netpol/go/v2
 
 go 1.19
 
