@@ -1,6 +1,6 @@
-module github.com/bromaniac/k8s-misc/ls-netpol/go/v2
+module github.com/bromaniac/k8s-tools/ls-netpol/go/v2
 
-go 1.19
+go 1.23
 
 require (
 	k8s.io/apimachinery v0.26.0
