@@ -5,11 +5,6 @@
 - Install dependencies: `uv pip install -e ".[dev]"`
 - Run application: `python -m volumefollower.main`
 
-## Testing
-- Run all tests: `pytest`
-- Run single test: `pytest tests/test_main.py::test_main -v`
-- Test with coverage: `pytest --cov=src/volumefollower`
-
 ## Linting & Formatting
 - Lint code: `ruff check .`
 - Fix auto-fixable issues: `ruff check --fix .`

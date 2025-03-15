@@ -1,44 +1,44 @@
 # VolumeFollower
 
-A Kubernetes utility to track volume placements and deploy pods
-on the node with the volume already attached to it.
+A simple Kubernetes utility to deploy a pod on the node where a PVC is attached.
 
-⏺ This is a script to interact with the Kubernetes API that can:
+## What it does
 
-  1. Find which node a PVC (Persistent Volume Claim) is attached to
-  2. Display detailed information about the PVC including:
-    - Which node it's attached to
-    - What pods are using the PVC
-    - Volume details and status
-  3. Deploy a pod on a specific node
+This tool:
+1. Finds which node a PVC (Persistent Volume Claim) is attached to
+2. Deploys a Debian pod on that node with the PVC mounted at /data
+3. Configures the pod to run "sleep infinity" (never terminate)
 
-# Usage:
+## Usage
 
-  ## Find which node a PVC is attached to (using default namespace)
-  volumefollower pvc-node my-pvc-name
+```
+volumefollower my-pvc-name -n my-namespace
+```
 
-  ## Find which node a PVC is attached to in a specific namespace
-  volumefollower pvc-node my-pvc-name -n my-namespace
+### Arguments
 
-  ## Use a specific kubeconfig file
-  volumefollower pvc-node my-pvc-name --kubeconfig /path/to/kubeconfig
+- `pvc_name`: Name of the PVC to follow (required)
+- `-n, --namespace`: Kubernetes namespace (defaults to "default")
+- `--kubeconfig`: Path to kubeconfig file (optional)
 
-  ## Deploy a pod on a specific node
-  volumefollower deploy-pod my-pod worker-node1 -i debian:latest -c "sleep 3600"
+### Example
 
-  ## Deploy a pod with a PVC mounted
-  volumefollower deploy-pod my-pod worker-node1 --pvc my-pvc-name --mount-path /mnt/data
+```bash
+# Follow a PVC in the default namespace
+volumefollower my-pvc
 
-  ## Deploy a pod with a PVC using default mount path (/data)
-  volumefollower deploy-pod my-pod worker-node1 --pvc my-pvc-name
+# Follow a PVC in a specific namespace
+volumefollower my-pvc -n my-namespace 
 
-  The utility works in both in-cluster and out-of-cluster environments by automatically detecting the appropriate configuration.
+# Use a specific kubeconfig file
+volumefollower my-pvc --kubeconfig /path/to/kubeconfig
+```
 
-# Hacking
+The utility works in both in-cluster and out-of-cluster environments by automatically detecting the appropriate configuration.
+
+## Development
+
 To work on this code you should run it in dev mode:
 ```bash
 uv venv .venv && source .venv/bin/activate && uv pip install -e ".[dev]"
 ```
-# TODO
-- Add tests for the pod deployment code
-- Add support for multiple PVC mounts in a single pod
