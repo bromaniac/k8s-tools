@@ -10,6 +10,7 @@ on the node with the volume already attached to it.
     - Which node it's attached to
     - What pods are using the PVC
     - Volume details and status
+  3. Deploy a pod on a specific node
 
 # Usage:
 
