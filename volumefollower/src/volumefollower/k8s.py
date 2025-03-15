@@ -173,6 +173,8 @@ def deploy_pod_on_node(
     labels=None,
     annotations=None,
     kubeconfig=None,
+    pvc_name=None,
+    mount_path="/data",
 ):
     """Deploy a pod on a specific Kubernetes node.
 
@@ -186,6 +188,8 @@ def deploy_pod_on_node(
         labels: Optional dictionary of labels to apply to the pod
         annotations: Optional dictionary of annotations to apply to the pod
         kubeconfig: Path to kubeconfig file (optional)
+        pvc_name: Optional name of PVC to mount in the pod
+        mount_path: Path to mount the PVC in the container (default: /data)
 
     Returns:
         Dictionary with pod details including status
@@ -195,6 +199,35 @@ def deploy_pod_on_node(
 
     # Initialize the CoreV1Api client
     core_v1 = client.CoreV1Api()
+
+    # Prepare container for pod spec
+    container = client.V1Container(
+        name=f"{pod_name}-container",
+        image=image,
+        # Default sleep command if none specified
+        command=(
+            ["/bin/sleep", "infinity"] if command is None and args is None else command
+        ),
+        args=args,
+    )
+
+    # Add volume mount to container if PVC is specified
+    volumes = []
+    if pvc_name:
+        # Add volume mount to container
+        container.volume_mounts = [
+            client.V1VolumeMount(name="data-volume", mount_path=mount_path)
+        ]
+
+        # Add volume to pod spec
+        volumes.append(
+            client.V1Volume(
+                name="data-volume",
+                persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
+                    claim_name=pvc_name
+                ),
+            )
+        )
 
     # Set up the pod configuration
     pod = client.V1Pod(
@@ -206,19 +239,8 @@ def deploy_pod_on_node(
         ),
         spec=client.V1PodSpec(
             node_name=node_name,  # Ensure pod runs on the specified node
-            containers=[
-                client.V1Container(
-                    name=f"{pod_name}-container",
-                    image=image,
-                    # Default sleep command if none specified
-                    command=(
-                        ["/bin/sleep", "infinity"]
-                        if command is None and args is None
-                        else command
-                    ),
-                    args=args,
-                )
-            ],
+            containers=[container],
+            volumes=volumes if volumes else None,
             restart_policy="Never",  # Don't restart the pod when it completes
         ),
     )

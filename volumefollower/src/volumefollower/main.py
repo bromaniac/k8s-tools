@@ -50,7 +50,14 @@ def get_pvc_node(pvc_name, namespace, kubeconfig=None):
 
 
 def deploy_pod(
-    pod_name, node_name, namespace, image="debian:latest", command=None, kubeconfig=None
+    pod_name,
+    node_name,
+    namespace,
+    image="debian:latest",
+    command=None,
+    pvc_name=None,
+    mount_path="/data",
+    kubeconfig=None,
 ):
     """Deploy a pod on a specific node.
 
@@ -60,6 +67,8 @@ def deploy_pod(
         namespace: Kubernetes namespace
         image: Container image to use (defaults to debian:latest)
         command: Command to run in the container (list of strings)
+        pvc_name: Optional name of PVC to mount in the pod
+        mount_path: Path to mount the PVC in the container (default: /data)
         kubeconfig: Path to kubeconfig file (optional)
 
     Returns:
@@ -73,6 +82,8 @@ def deploy_pod(
             namespace=namespace,
             image=image,
             command=command.split() if command else None,
+            pvc_name=pvc_name,
+            mount_path=mount_path,
             kubeconfig=kubeconfig,
         )
 
@@ -84,6 +95,8 @@ def deploy_pod(
         print(f"Node: {pod_info['node']}")
         if "creation_time" in pod_info and pod_info["creation_time"]:
             print(f"Created at: {pod_info['creation_time']}")
+        if pvc_name:
+            print(f"PVC: {pvc_name} mounted at {mount_path}")
 
         return 0
     except Exception as e:
@@ -126,6 +139,14 @@ def main(args=None):
         "-i", "--image", default="debian:latest", help="Container image to use"
     )
     pod_parser.add_argument("-c", "--command", help="Command to run in the container")
+    pod_parser.add_argument(
+        "--pvc", dest="pvc_name", help="Name of PVC to mount in the pod"
+    )
+    pod_parser.add_argument(
+        "--mount-path",
+        default="/data",
+        help="Path to mount the PVC in the container (default: /data)",
+    )
     pod_parser.add_argument("--kubeconfig", help="Path to kubeconfig file")
 
     # Parse arguments
@@ -143,6 +164,8 @@ def main(args=None):
             parsed_args.namespace,
             parsed_args.image,
             parsed_args.command,
+            parsed_args.pvc_name,
+            parsed_args.mount_path,
             parsed_args.kubeconfig,
         )
     else:

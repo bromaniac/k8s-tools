@@ -26,6 +26,12 @@ on the node with the volume already attached to it.
   ## Deploy a pod on a specific node
   volumefollower deploy-pod my-pod worker-node1 -i debian:latest -c "sleep 3600"
 
+  ## Deploy a pod with a PVC mounted
+  volumefollower deploy-pod my-pod worker-node1 --pvc my-pvc-name --mount-path /mnt/data
+
+  ## Deploy a pod with a PVC using default mount path (/data)
+  volumefollower deploy-pod my-pod worker-node1 --pvc my-pvc-name
+
   The utility works in both in-cluster and out-of-cluster environments by automatically detecting the appropriate configuration.
 
 # Hacking
@@ -34,4 +40,5 @@ To work on this code you should run it in dev mode:
 uv venv .venv && source .venv/bin/activate && uv pip install -e ".[dev]"
 ```
 # TODO
-Add tests for the pod deployment code
+- Add tests for the pod deployment code
+- Add support for multiple PVC mounts in a single pod
