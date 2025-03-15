@@ -1,9 +1,9 @@
 [project]
 name = "secrets2vault"
 version = "0.1.0"
-description = "Add your description here"
+authors = [{ name = "Fredrik Broman", email = "fredrik.broman@gmail.com" }]
+description = "Imports Kubernetes secrets into Vault"
 readme = "README.md"
+license = "Unlicense"
 requires-python = ">=3.13"
-dependencies = [
-    "hvac>=2.3.0",
-]
+dependencies = ["hvac>=2.3.0"]
