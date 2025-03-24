@@ -1,6 +1,10 @@
 ## Project Overview
 These scripts form a pipeline for processing secrets and storing them in HashiCorp Vault.
 
+There is a Go implementation of the decoder for use by people that don't have Python installed.
+
+Instead of create-secrets.py I suggest the excellent Medusa tool for import into Vault: [Medusa](https://github.com/jonasvinther/medusa)
+
 ### decode-stdin.py
 **Purpose**: Decodes Base64-encoded secrets from stdin
 
